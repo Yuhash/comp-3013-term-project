@@ -1,27 +1,74 @@
-import Image from "next/image";
-import { Prisma } from "@prisma/client";
+import { prisma } from "@/database";
 import Link from "next/link";
+// import { setTimeout } from "node:timers/promises";
+import { Suspense } from "react";
 
-export default async function Home() {
-  const blocks = [
-    { id: 1, title: "Test 1", code: `console.log("hello 1")`},
-    { id: 2, title: "Test 2", code: `console.log("hello 2")`},
-  
-  ]; // Placeholder for fetched data}]
-  // const blocks = await Prisma.block.findMany();
+export default function Home() {
   return (
-    <div>
-        <h1>Code Blocks</h1>
-        <ul>
-          {blocks.map((block) => (
-            <li key={block.id}>
-              <Link href={`blocks/${block.id}`}>
-              {block.title}: {block.code}
-              </Link>
+    <Suspense fallback={<SkeletonBlocks />}>
+      <BlocksList />
+    </Suspense>
+  );
+}
+
+async function BlocksList() {
+  const blocks = await prisma.block.findMany();
+  // await setTimeout(5000);
+  return (
+    <main className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-2xl mx-auto">
+        <header className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-semibold text-gray-800">Code blocks</h1>
+          <Link
+            href="/blocks/create"
+            className="inline-block px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+          >
+            + Create Block
+          </Link>
+        </header>
+
+        {blocks.length === 0 ? (
+          <p className="text-gray-500 italic text-center">
+            No blocks yet. Create one to get started!
+          </p>
+        ) : (
+          <ul className="space-y-3">
+            {blocks.map((block) => (
+              <li
+                key={block.id}
+                className="p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition"
+              >
+                <span className="text-gray-800 font-medium">
+                  <Link href={`/blocks/${block.id}`}>{block.title}</Link>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </main>
+  );
+}
+
+function SkeletonBlocks() {
+  return (
+    <main className="min-h-screen bg-gray-50 p-8 animate-pulse">
+      <div className="max-w-2xl mx-auto">
+        {/* Header skeleton */}
+        <header className="flex items-center justify-between mb-8">
+          <div className="h-8 w-40 bg-gray-300 rounded"></div>
+          <div className="h-10 w-32 bg-gray-300 rounded-lg"></div>
+        </header>
+
+        {/* List skeleton */}
+        <ul className="space-y-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <li key={i} className="p-4 bg-white rounded-lg shadow-sm">
+              <div className="h-5 w-48 bg-gray-300 rounded"></div>
             </li>
-          ))}                   
+          ))}
         </ul>
-      
-    </div>
+      </div>
+    </main>
   );
 }

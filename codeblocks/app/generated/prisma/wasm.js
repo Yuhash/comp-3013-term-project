@@ -116,7 +116,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/armaandhanji/Desktop/bcit26/fswd/next/codeblocks/app/generated/prisma",
+      "value": "C:\\BCIT-COMP3013\\week11\\codeblocks\\app\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -125,16 +125,20 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "darwin",
+        "value": "windows",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "windows"
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/armaandhanji/Desktop/bcit26/fswd/next/codeblocks/prisma/schema.prisma",
+    "sourceFilePath": "C:\\BCIT-COMP3013\\week11\\codeblocks\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
+    "rootEnvPath": "../../../.env",
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
@@ -144,6 +148,7 @@ const config = {
     "db"
   ],
   "activeProvider": "sqlite",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -152,8 +157,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../app/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Block {\n  id    Int    @id @default(autoincrement())\n  title String\n  code  String\n}\n",
-  "inlineSchemaHash": "46319bcb9404019a201c8c338b3be6bb242ad2050cd8cd775ff225d63be78351",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../app/generated/prisma\"\n  binaryTargets = [\"native\", \"windows\"]\n}\n\ndatasource db {\n  provider = \"sqlite\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Block {\n  id    Int    @id @default(autoincrement())\n  title String\n  code  String\n}\n",
+  "inlineSchemaHash": "5fb8d8260ecc2d8aadc8cb5eea4385764219d600ea1741787f2234903eecbb16",
   "copyEngine": true
 }
 config.dirname = '/'
