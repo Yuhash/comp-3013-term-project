@@ -9,8 +9,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+model User {
+  id  Int   @id @default(autoincrement())
+  username  String @unique
+  password  String
+  role      String @default("user")
+  blocks    Block[]  
+}
+
 model Block {
   id    Int    @id @default(autoincrement())
   title String
   code  String
+  userId Int  
+  user    User @relation(fields: [userId], references: [id])
 }
+

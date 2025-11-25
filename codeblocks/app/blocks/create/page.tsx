@@ -1,13 +1,14 @@
 import { createBlock } from "@/app/api";
-import { prisma } from "@/database";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export default function CreateBlock() {
   return (
     <main className="min-h-screen bg-gray-50 p-8">
     <div className="max-w-2xl mx-auto space-y-6">
+      {/*Page heading */}
       <h1 className="text-2xl font-semibold">Create a block</h1>
+
+      {/*Form */}
       <form action={createBlock}
       className="max-w-2xl mx-auto mt-6 space-y-6 bg-white p-6 rounded shadow"
       >

@@ -1,50 +1,35 @@
 import { prisma } from "@/database";
 import Link from "next/link";
 import { notFound, redirect} from "next/navigation";
+import { deleteBlock } from "@/app/api"; // Import server action
 
-type Props = { params: { id: string } };
+type Params =  { id: string };
 
-{/* Delete  block function */}
-async function deleteBlock(formData: FormData) {
-  "use server";
 
-  const rawId = formData.get("id");
-  const id = Number(rawId);
-
-  // Return not found if it doesn't exist or is null
-  if (!rawId || Number.isNaN(id)  ) {
-    return notFound();
-  }
-
-  const existingId = await prisma.block.findUnique({
-    where: { id },
-    select: { id: true },
-  });
-
-  if (!existingId) {
-    return notFound();
-  }
-  await prisma.block.delete({
-    where: { id },
-  });
-  redirect("/"); // Go back to home page
-}
-
-export default async function ShowBlock({ params }: Props) {
-
-  const { id } =  await params;
+export default async function ShowBlock({ 
+ 
+  params,
+}: {
+  params: Promise<Params>;
+}) {
+  const { id } = await params; // ✅ unwrap the Promise
 
   const numericId = Number(id);
-  // Manage invalid id value
-  if (Number.isNaN(numericId) || !Number.isInteger(numericId)) {
-    return notFound();
+
+  // Validate ID
+  if (!Number.isInteger(numericId) || numericId <= 0) {
+    notFound(); // do not return
   }
 
+  // Fetch block by ID
   const block = await prisma.block.findUnique({
-    where: { id: Number(id) },
+    where: { id: numericId },
   });
 
-  if (!block) return notFound();
+  if (!block) {
+    notFound(); // do not return
+  }
+
 
   return (
     <main className="min-h-screen bg-gray-50 p-8">
@@ -58,27 +43,33 @@ export default async function ShowBlock({ params }: Props) {
           ← Home
         </Link>
       </header>
-      <div className="max-w-2xl mx-auto">
-        <h1>{block.title}</h1>
-      </div>
+
+      {/* Block code */}
       <div className="max-w-2xl mx-auto mt-4">
+        <h2 className="text-xl font-bold text-gray-800 mb-2">{block.title}</h2>
         <pre className="bg-white p-4 rounded shadow">
-          <code>{block.code}</code>
+          <code className="font-mono">{block.code}</code>
         </pre>
       </div>
+
+      {/* Actions */}
       <div className="max-w-2xl mx-auto mt-4 flex space-x-4">
         <Link href={`/blocks/${block.id}/edit`}>
-          <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 cursor-pointer">Edit</button>
+          <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 cursor-pointer">
+            Edit
+          </button>
         </Link>
-        <form action = {deleteBlock}>
+
+        {/* Delete form */}
+        <form action={deleteBlock}>
           <input type="hidden" name="id" value={block.id} />
           <button
             type="submit"
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
-            >
-              Delete
+          >
+            Delete
           </button>
-       </form>
+        </form>
       </div>
     </main>
   );

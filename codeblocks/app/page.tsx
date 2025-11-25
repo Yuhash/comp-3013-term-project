@@ -2,17 +2,34 @@ import { prisma } from "@/database";
 import Link from "next/link";
 // import { setTimeout } from "node:timers/promises";
 import { Suspense } from "react";
+import { redirect } from "next/navigation"
+import { cookies } from "next/headers"
 
-export default function Home() {
+export default async function Home() {
+  
+  const userId = (await cookies()).get("user_id")?.value;
+  if (!userId) {
+    redirect("/login"); // Send to login if not authenticated
+  }
+
   return (
-    <Suspense fallback={<SkeletonBlocks />}>
       <BlocksList />
-    </Suspense>
   );
 }
 
 async function BlocksList() {
-  const blocks = await prisma.block.findMany();
+  // Get current user id from cookies
+  const userIdRaw = (await cookies()).get("user_id")?.value
+  const currentUserId = Number(userIdRaw);
+  if (!currentUserId) {
+    <p className="text-gray-500 italic text-center">
+      You must be logged in to view your code blocks.
+    </p>
+  }
+  const blocks = await prisma.block.findMany({
+    where: { userId: currentUserId },
+    orderBy: { id: "desc" }, // order by latest
+  });
   // await setTimeout(5000);
   return (
     <main className="min-h-screen bg-gray-50 p-8">
